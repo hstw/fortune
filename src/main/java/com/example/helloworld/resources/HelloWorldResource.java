@@ -23,8 +23,8 @@ public class HelloWorldResource {
     /**
      * HTTP GET
      * invoke by:
-     * curl  localhost:8080/hello-world?name=aaa
-     * curl  localhost:8080/hello-world
+     * curl -XGET localhost:8080/hello-world?name=aaa
+     * curl -XGET localhost:8080/hello-world
      *
      * @param name Note that the URL parameter `name` you see above gets parsed to the `name` method parameter below.
      * @return
@@ -37,7 +37,8 @@ public class HelloWorldResource {
     /**
      * HTTP POST
      * invoke by:
-     * curl -XPOST localhost:8080/hello-world -H "Content-Type: application/json"   -H "Accept: application/json" -d '{"id":333}'
+     * curl -XPOST localhost:8080/hello-world -H "Content-Type: application/json" -d '{"id":333}'
+     * Note above that `-d` parameter for `curl` specifies the JSON data sent as payload to the HTTP server
      *
      * @param saying Note for HTTP POST, the payload data above are parsed into the `saying` method parameter below.
      */
@@ -48,7 +49,7 @@ public class HelloWorldResource {
 
     /**
      * HTTP DELETE
-     * curl -XDELETE  'localhost:8080/hello-world?id=1234'
+     * curl -XDELETE 'localhost:8080/hello-world?id=1234'
      * Note that the URL parameter `id` you see above gets parsed to the `id` method parameter below.
      * @param id
      */
