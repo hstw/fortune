@@ -1,6 +1,7 @@
 package com.borderxlab.fortune;
 
 import org.skife.jdbi.v2.DBI;
+import org.skife.jdbi.v2.Handle;
 import io.dropwizard.jdbi.DBIFactory;
 import io.dropwizard.Application;
 import io.dropwizard.configuration.EnvironmentVariableSubstitutor;
@@ -18,7 +19,6 @@ public class FortuneApplication extends Application<FortuneConfiguration> {
     public static void main(String[] args) throws Exception {
         new FortuneApplication().run(args);
     }
-
 
     @Override
     public String getName() {
@@ -39,6 +39,7 @@ public class FortuneApplication extends Application<FortuneConfiguration> {
         final DBIFactory factory = new DBIFactory();
         final DBI jdbi =
                 factory.build(environment, configuration.getDataSourceFactory(), "postgresql");
+
         final FortuneDAO fortuneDAO = jdbi.onDemand(FortuneDAO.class);
         final FortunePool fortunePool = new FortunePool(fortuneDAO);
 

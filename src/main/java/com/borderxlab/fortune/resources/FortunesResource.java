@@ -30,13 +30,11 @@ public class FortunesResource {
     }
 
     /**
-     * HTTP GET invoke by: curl -XGET localhost:8080/hello-world?name=aaa
+     * HTTP GET invoke by:
      * 
-     * curl -XGET localhost:8080/hello-world
+     * curl -XGET localhost:8080/fortunes
      *
-     * @param name Note that the URL parameter `name` you see above gets parsed to the `name` method
-     *             parameter below.
-     * @return
+     * @return the list of all fortunes
      */
     @GET
     public Response listAllFortunes() {

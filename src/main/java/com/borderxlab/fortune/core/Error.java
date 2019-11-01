@@ -10,7 +10,6 @@ public class Error {
     private String message;
 
     public Error() {
-        // Jackson deserialization
     }
 
     public Error(String message) {

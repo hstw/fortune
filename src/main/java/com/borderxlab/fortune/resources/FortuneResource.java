@@ -27,26 +27,22 @@ public class FortuneResource {
     /**
      * HTTP GET invoke by:
      * 
-     * curl -XGET localhost:8080/hello-world?name=aaa
+     * curl -XGET localhost:8080/fortune
      * 
-     * curl -XGET localhost:8080/hello-world
-     *
-     * @param name Note that the URL parameter `name` you see above gets parsed to the `name` method
-     *             parameter below.
-     * @return
+     * @return a randomly selected fortune
      */
     @GET
     public Response getFortune() {
         LOGGER.info("getFortune\n");
 
-        Fortune f = null;
+        Fortune fortune = null;
         try {
-            f = fortunePool.getRandomFortune();
+            fortune = fortunePool.getRandomFortune();
         } catch (Exception e) {
             return Response.status(Response.Status.NOT_FOUND).entity(new Error(ERROR_NO_FORTUNE))
                     .build();
         }
 
-        return Response.ok().entity(f).build();
+        return Response.ok().entity(fortune).build();
     }
 }

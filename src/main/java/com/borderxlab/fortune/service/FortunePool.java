@@ -14,12 +14,10 @@ public class FortunePool {
     private final Random rand;
 
     private ArrayList<Fortune> fortunes;
-    // Fortune id to location in list
-    private HashMap<Integer, Integer> idLocationMap;
-    // Fortune content to id set map
-    private HashMap<String, HashSet<Integer>> contentIdMap;
-    // Fortune id to content map
-    private HashMap<Integer, String> idContentMap;
+    private HashMap<Integer, Integer> idLocationMap; // Fortune id to location in list
+    private HashMap<String, HashSet<Integer>> contentIdMap; // Fortune content to id set map
+    private HashMap<Integer, String> idContentMap; // Fortune id to content map
+
 
     public FortunePool(FortuneDAO dao) {
         counter = new AtomicInteger();
@@ -33,7 +31,12 @@ public class FortunePool {
         recoverFromDatabase();
     }
 
+    /**
+     * Loads fortunes in DB to memory
+     */
     private void recoverFromDatabase() {
+        fortuneDAO.createTableIfNotExists();
+
         List<Fortune> fortunes = fortuneDAO.getFortunes();
 
         int maxId = 0;
@@ -47,7 +50,9 @@ public class FortunePool {
     }
 
     /**
-     * Inserts a fortune to the list.
+     * Inserts a fortune to the list and update it to db.
+     * 
+     * @param fortuneContent content of the fortune to be inserted
      * 
      * @return the inserted fortune object.
      */
@@ -56,7 +61,14 @@ public class FortunePool {
 
         Fortune fortune = insertFortuneHelper(fortuneId, fortuneContent);
 
-        fortuneDAO.insertFortune(fortuneId, fortuneContent);
+        // Create a new thread to update DB
+        Thread updateDBThread = new Thread(new Runnable() {
+            public void run() {
+                fortuneDAO.insertFortune(fortuneId, fortuneContent);
+            }
+        });
+        updateDBThread.start();
+
         return fortune;
     }
 
@@ -65,7 +77,7 @@ public class FortunePool {
      * 
      * @return the inserted fortune object.
      */
-    public Fortune insertFortuneHelper(int fortuneId, String fortuneContent) {
+    private Fortune insertFortuneHelper(int fortuneId, String fortuneContent) {
         if (!contentIdMap.containsKey(fortuneContent))
             contentIdMap.put(fortuneContent, new HashSet<Integer>());
 
@@ -75,7 +87,6 @@ public class FortunePool {
 
         Fortune f = new Fortune(fortuneId, fortuneContent);
         fortunes.add(f);
-
 
         return f;
     }
@@ -105,8 +116,13 @@ public class FortunePool {
         contentIdMap.get(content).remove(fortuneId);
         idContentMap.remove(fortuneId);
 
-        fortuneDAO.deleteFortune(fortuneId);
-
+        // Create a new thread to update DB
+        Thread updateDBThread = new Thread(new Runnable() {
+            public void run() {
+                fortuneDAO.deleteFortune(fortuneId);
+            }
+        });
+        updateDBThread.start();
     }
 
 
@@ -114,7 +130,6 @@ public class FortunePool {
      * Get the fortune with specified id
      * 
      * @throws NoSuchElementException if the id is not in the list.
-     * 
      */
     public Fortune getFortune(int fortuneId) throws NoSuchElementException {
         if (!idLocationMap.containsKey(fortuneId)) {
@@ -128,7 +143,6 @@ public class FortunePool {
      * Get a random fortune from the list
      * 
      * @throws IllegalArgumentException if the fortune list is empty.
-     * 
      */
     public Fortune getRandomFortune() throws IllegalArgumentException {
         if (fortunes.isEmpty())
