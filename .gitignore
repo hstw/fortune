@@ -3,3 +3,4 @@ dropwizard-example.iml
 logs
 .idea/
 dependency-reduced-pom.xml
+.*
