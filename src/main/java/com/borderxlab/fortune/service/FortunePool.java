@@ -29,9 +29,22 @@ public class FortunePool {
         contentIdMap = new HashMap<String, HashSet<Integer>>();
         idContentMap = new HashMap<Integer, String>();
         fortuneDAO = dao;
+
+        recoverFromDatabase();
     }
 
+    private void recoverFromDatabase() {
+        List<Fortune> fortunes = fortuneDAO.getFortunes();
 
+        int maxId = 0;
+        for (Fortune f : fortunes) {
+            maxId = Math.max(maxId, f.getId());
+            insertFortuneHelper(f.getId(), f.getContent());
+        }
+
+        // Set the counter to max id + 1 to avoid conflict
+        counter.set(maxId + 1);
+    }
 
     /**
      * Inserts a fortune to the list.
@@ -41,6 +54,18 @@ public class FortunePool {
     public Fortune insertFortune(String fortuneContent) {
         int fortuneId = counter.getAndIncrement();
 
+        Fortune fortune = insertFortuneHelper(fortuneId, fortuneContent);
+
+        fortuneDAO.insertFortune(fortuneId, fortuneContent);
+        return fortune;
+    }
+
+    /**
+     * Inserts a fortune to the list.
+     * 
+     * @return the inserted fortune object.
+     */
+    public Fortune insertFortuneHelper(int fortuneId, String fortuneContent) {
         if (!contentIdMap.containsKey(fortuneContent))
             contentIdMap.put(fortuneContent, new HashSet<Integer>());
 
@@ -51,7 +76,6 @@ public class FortunePool {
         Fortune f = new Fortune(fortuneId, fortuneContent);
         fortunes.add(f);
 
-        fortuneDAO.insertFortune(fortuneId, fortuneContent);
 
         return f;
     }
@@ -85,8 +109,23 @@ public class FortunePool {
 
     }
 
+
     /**
-     * Get a random fortune from the list *
+     * Get the fortune with specified id
+     * 
+     * @throws NoSuchElementException if the id is not in the list.
+     * 
+     */
+    public Fortune getFortune(int fortuneId) throws NoSuchElementException {
+        if (!idLocationMap.containsKey(fortuneId)) {
+            throw new NoSuchElementException();
+        }
+
+        return fortunes.get(idLocationMap.get(fortuneId));
+    }
+
+    /**
+     * Get a random fortune from the list
      * 
      * @throws IllegalArgumentException if the fortune list is empty.
      * 
@@ -100,10 +139,7 @@ public class FortunePool {
 
     /** Get the list of fortunes */
     public Fortune[] getAllFortunes() {
-        System.out.println("======");
-        for (Fortune s : fortuneDAO.getFortunes()) {
-            System.out.println(s.getId() + "," + s.getContent());
-        }
+        // Zere-length array is faster than an array with actual size (JVM optimization)
         return fortunes.toArray(new Fortune[0]);
     }
 }

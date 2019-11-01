@@ -7,11 +7,15 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import com.borderxlab.fortune.core.Fortune;
-import com.borderxlab.fortune.service.FortunePool;;
+import com.borderxlab.fortune.service.FortunePool;
+import com.borderxlab.fortune.core.Error;;
+
 
 @Path("/fortune")
 @Produces(MediaType.APPLICATION_JSON)
 public class FortuneResource {
+    private static final String ERROR_NO_FORTUNE = "No any fortune";
+
     private static final Logger LOGGER = LoggerFactory.getLogger(FortuneResource.class);
 
     private FortunePool fortunePool;
@@ -39,7 +43,8 @@ public class FortuneResource {
         try {
             f = fortunePool.getRandomFortune();
         } catch (Exception e) {
-            return Response.status(Response.Status.NOT_FOUND).build();
+            return Response.status(Response.Status.NOT_FOUND).entity(new Error(ERROR_NO_FORTUNE))
+                    .build();
         }
 
         return Response.ok().entity(f).build();
