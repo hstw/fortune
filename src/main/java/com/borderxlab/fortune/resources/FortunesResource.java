@@ -2,7 +2,6 @@ package com.borderxlab.fortune.resources;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
@@ -10,6 +9,8 @@ import javax.ws.rs.core.MediaType;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
+import com.borderxlab.fortune.core.Fortune;
+import com.borderxlab.fortune.service.FortunePool;;
 
 @Path("/fortunes")
 @Produces(MediaType.APPLICATION_JSON)
@@ -18,8 +19,8 @@ public class FortunesResource {
 
     private FortunePool fortunePool;
 
-    public FortunesResource() {
-        fortunePool = FortunePool.getInstance();
+    public FortunesResource(FortunePool fortunePool) {
+        this.fortunePool = fortunePool;
     }
 
     /**

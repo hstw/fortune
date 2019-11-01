@@ -21,26 +21,26 @@ public class HelloWorldResource {
     }
 
     /**
-     * HTTP GET
-     * invoke by:
-     * curl -XGET localhost:8080/hello-world?name=aaa
-     * curl -XGET localhost:8080/hello-world
+     * HTTP GET invoke by: curl -XGET localhost:8080/hello-world?name=aaa curl -XGET
+     * localhost:8080/hello-world
      *
-     * @param name Note that the URL parameter `name` you see above gets parsed to the `name` method parameter below.
+     * @param name Note that the URL parameter `name` you see above gets parsed to the `name` method
+     *             parameter below.
      * @return
      */
     @GET
     public Saying sayHello(@QueryParam("name") Optional<String> name) {
-        return new Saying(counter.incrementAndGet(), name.isPresent() ? "Hello: " + name.get() : "Hello: Stranger");
+        return new Saying(counter.incrementAndGet(),
+                name.isPresent() ? "Hello: " + name.get() : "Hello: Stranger");
     }
 
     /**
-     * HTTP POST
-     * invoke by:
-     * curl -XPOST localhost:8080/hello-world -H "Content-Type: application/json" -d '{"id":333}'
-     * Note above that `-d` parameter for `curl` specifies the JSON data sent as payload to the HTTP server
+     * HTTP POST invoke by: curl -XPOST localhost:8080/hello-world -H "Content-Type:
+     * application/json" -d '{"id":333}' Note above that `-d` parameter for `curl` specifies the
+     * JSON data sent as payload to the HTTP server
      *
-     * @param saying Note for HTTP POST, the payload data above are parsed into the `saying` method parameter below.
+     * @param saying Note for HTTP POST, the payload data above are parsed into the `saying` method
+     *               parameter below.
      */
     @POST
     public void receiveHello(@Valid Saying saying) {
@@ -48,9 +48,9 @@ public class HelloWorldResource {
     }
 
     /**
-     * HTTP DELETE
-     * curl -XDELETE 'localhost:8080/hello-world?id=1234'
-     * Note that the URL parameter `id` you see above gets parsed to the `id` method parameter below.
+     * HTTP DELETE curl -XDELETE 'localhost:8080/hello-world?id=1234' Note that the URL parameter
+     * `id` you see above gets parsed to the `id` method parameter below.
+     * 
      * @param id
      */
     @DELETE

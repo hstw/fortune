@@ -6,6 +6,8 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import com.borderxlab.fortune.core.Fortune;
+import com.borderxlab.fortune.service.FortunePool;;
 
 @Path("/fortune")
 @Produces(MediaType.APPLICATION_JSON)
@@ -14,8 +16,8 @@ public class FortuneResource {
 
     private FortunePool fortunePool;
 
-    public FortuneResource() {
-        fortunePool = FortunePool.getInstance();
+    public FortuneResource(FortunePool fortunePool) {
+        this.fortunePool = fortunePool;
     }
 
     /**

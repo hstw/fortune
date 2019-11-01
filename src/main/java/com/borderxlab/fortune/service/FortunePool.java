@@ -1,12 +1,15 @@
-package com.borderxlab.fortune.resources;
+package com.borderxlab.fortune.service;
 
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.*;
 
+import com.borderxlab.fortune.core.Fortune;
+import com.borderxlab.fortune.db.FortuneDAO;
+
+
 // FortunePool is a singleton class
 public class FortunePool {
-    private static FortunePool single_instance = null;
-
+    private final FortuneDAO fortuneDAO;
     private final AtomicInteger counter;
     private final Random rand;
 
@@ -18,22 +21,16 @@ public class FortunePool {
     // Fortune id to content map
     private HashMap<Integer, String> idContentMap;
 
-    private FortunePool() {
+    public FortunePool(FortuneDAO dao) {
         counter = new AtomicInteger();
         rand = new Random();
         fortunes = new ArrayList<Fortune>();
         idLocationMap = new HashMap<Integer, Integer>();
         contentIdMap = new HashMap<String, HashSet<Integer>>();
         idContentMap = new HashMap<Integer, String>();
+        fortuneDAO = dao;
     }
 
-    // static method to create instance of Singleton class
-    public static FortunePool getInstance() {
-        if (single_instance == null)
-            single_instance = new FortunePool();
-
-        return single_instance;
-    }
 
 
     /**
@@ -53,6 +50,8 @@ public class FortunePool {
 
         Fortune f = new Fortune(fortuneId, fortuneContent);
         fortunes.add(f);
+
+        fortuneDAO.insertFortune(fortuneId, fortuneContent);
 
         return f;
     }
@@ -81,6 +80,9 @@ public class FortunePool {
         String content = idContentMap.get(fortuneId);
         contentIdMap.get(content).remove(fortuneId);
         idContentMap.remove(fortuneId);
+
+        fortuneDAO.deleteFortune(fortuneId);
+
     }
 
     /**
@@ -98,6 +100,10 @@ public class FortunePool {
 
     /** Get the list of fortunes */
     public Fortune[] getAllFortunes() {
+        System.out.println("======");
+        for (Fortune s : fortuneDAO.getFortunes()) {
+            System.out.println(s.getId() + "," + s.getContent());
+        }
         return fortunes.toArray(new Fortune[0]);
     }
 }

@@ -39,3 +39,13 @@ logging:
       timeZone: UTC
       maxFileSize: 10MB
 
+# Database settings
+database:
+    # the name of the JDBC driver, mysql in our case
+    driverClass: org.postgresql.Driver
+    # the username
+    user: guanhaos
+    # the password
+    password: 123
+    # the JDBC URL;
+    url: jdbc:postgresql://localhost:5432/fortune

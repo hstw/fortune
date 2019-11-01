@@ -1,4 +1,4 @@
-package com.borderxlab.fortune.resources;
+package com.borderxlab.fortune.core;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -28,3 +28,5 @@ public class Fortune {
         return content;
     }
 }
+
+
